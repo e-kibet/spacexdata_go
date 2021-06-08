@@ -1,26 +1,23 @@
 package main
 
 import (
-	"demo/database"
 	"demo/book"
-	"demo/database"
-	"fmt"
+	"demo/controllers"
 	"log"
+	"net/http"
+
+	swagger "github.com/arsmn/fiber-swagger/v2"
+	_ "github.com/arsmn/fiber-swagger/v2/example/docs"
+	"github.com/gin-gonic/gin"
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
-	"gorm.io/driver/sqlite"
 )
 
-func initDatabase() {
-	var err error
-	database.DBConn, err := gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{})
-	if err != nil {
-		panic("Failed to connect to the database")
-	}
-	fmt.Print("Created the database connection")
-}
-
 func setUpRoutes(app *fiber.App) {
+	r := gin.Default()
+	r.GET("ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, "pong")
+	})
+
 	app.Get("/api/v1/books", book.GetBooks)
 
 	app.Get("/api/v1/books/:id", book.GetBook)
@@ -28,13 +25,26 @@ func setUpRoutes(app *fiber.App) {
 	app.Post("/api/v1/books", book.NewBooks)
 
 	app.Delete("/api/v1/books/:id", book.DeleteBooks)
+
+	userRepo := controllers.New()
+	r.POST("/users", userRepo.CreateUser)
+	r.GET("/users", userRepo.GetUsers)
+	r.GET("/users/:id", userRepo.GetUser)
+	r.PUT("/users/:id", userRepo.UpdateUser)
+	r.DELETE("/users/:id", userRepo.DeleteUser)
+
 }
 
 func main() {
 	app := fiber.New()
-
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Welcome to the spacexdata")
+	})
+	app.Get("/swagger/*", swagger.Handler)
+	app.Get("/swagger/*", swagger.New(swagger.Config{ // custom
+		URL:         "http://example.com/doc.json",
+		DeepLinking: false,
+	}))
 	setUpRoutes(app)
-	initDatabase()
-	defer database.DBConn.Close()
 	log.Fatal(app.Listen(":3200"))
 }
