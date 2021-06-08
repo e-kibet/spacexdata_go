@@ -30,7 +30,7 @@ func connectDB() *gorm.DB {
 		return nil
 	} else {
 		fmt.Print("Create the connection to the DB")
-		db.AutoMigrate(models.User{})
+		db.AutoMigrate(models.User{}, models.Info{})
 		return db
 	}
 

@@ -14,6 +14,7 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/klauspost/compress v1.13.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/rizalgowandy/go-swag-sample v0.0.0-20210415070229-899a701b300c
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/swaggo/swag v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5 // indirect

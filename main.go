@@ -33,6 +33,9 @@ func setUpRoutes(app *fiber.App) {
 	r.PUT("/users/:id", userRepo.UpdateUser)
 	r.DELETE("/users/:id", userRepo.DeleteUser)
 
+	infoRepo := controllers.NewInfo()
+	r.GET("/infos", infoRepo.GetInfos)
+
 }
 
 func main() {
@@ -40,11 +43,11 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Welcome to the spacexdata")
 	})
-	app.Get("/swagger/*", swagger.Handler)
-	app.Get("/swagger/*", swagger.New(swagger.Config{ // custom
-		URL:         "http://example.com/doc.json",
-		DeepLinking: false,
-	}))
 	setUpRoutes(app)
+	app.Get("/swagger/*", swagger.Handler)
+	app.Get("/swagger/*", swagger.New(swagger.Config{
+		URL:         "http://example.com/doc.json",
+		DeepLinking: true,
+	}))
 	log.Fatal(app.Listen(":3200"))
 }
